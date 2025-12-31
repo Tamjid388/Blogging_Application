@@ -29,7 +29,7 @@ A modern, full-stack blogging application built with Next.js, Prisma, Express, a
 
 ## Entity Relationship Diagram (ERD)
 
-![ERD](https://i.ibb.co.com/BH9HGr7H/usecasel.pnghttps://i.ibb.co.com/QFmjF07d/blog-Application.webp)
+![ERD](https://i.ibb.co.com/f7wB3XT/blog-Application.webp)
 
 
 
