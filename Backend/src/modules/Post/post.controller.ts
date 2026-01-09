@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { postService } from "./post.services";
 import { PostStatus } from "../../../generated/prisma/enums";
+import paginationSortingHelper from "../../helpers/paginationAndSortinghelper";
 
 const createPost = async (req: Request, res: Response) => {
   try {
@@ -36,17 +37,29 @@ const getAllPosts = async (req: Request, res: Response) => {
         ? false
         : undefined
       : undefined;
-    const status=req.query.status as PostStatus | undefined
-    const authorId=req.query.authorId as string 
+    const status = req.query.status as PostStatus | undefined;
+    const authorId = req.query.authorId as string;
+
+    const { page, limit, skip, sortBy, sortOrder } = paginationSortingHelper(
+      req.query
+    );
+
     const result = await postService.getAllPosts({
       search: searchString,
       tags,
-      isFeatured,status, authorId
+      isFeatured,
+      status,
+      authorId,
+      page,
+      limit,
+      skip,
+      sortBy,
+      sortOrder,
     });
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Posts Retrived Successfully",
-      data: result,
+      result,
     });
   } catch (error: any) {
     res.status(400).json({
@@ -56,8 +69,28 @@ const getAllPosts = async (req: Request, res: Response) => {
     });
   }
 };
+const getPostById = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
 
+    if (!postId) {
+      return res.status(400).json({
+        message: "Post Id Not Found",
+      });
+    }
+    const result = await postService.getPostById(postId);
+    res.status(201).json({
+      result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      message: "Post not found",
+      details: error,
+    });
+  }
+};
 export const postController = {
   createPost,
   getAllPosts,
+  getPostById,
 };

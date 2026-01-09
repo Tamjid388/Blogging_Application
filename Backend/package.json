@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx tsx watch ./src/server.ts",
     "lint": "eslint . --ext .ts,.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "seed:admin": "npx tsx ./src/scripts/seedAdmin.ts"
   },
   "keywords": [],
   "author": "",

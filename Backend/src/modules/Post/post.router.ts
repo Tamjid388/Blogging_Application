@@ -7,6 +7,8 @@ import auth from "../../Middleware/auth";
 const router=Router()
 
 
-router.post("/",auth('ADMIN','USER'),postController.createPost)
+
 router.get("/",postController.getAllPosts)
+router.get("/:postId",postController.getPostById)
+router.post("/",auth('ADMIN','USER'),postController.createPost)
 export const postRouter=router;

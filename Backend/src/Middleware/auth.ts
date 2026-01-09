@@ -32,7 +32,7 @@ const auth = (...roles: any) => {
         });
       }
 
-      console.log(session);
+      // console.log(session);
       req.user = {
         id: session.user.id,
         email: session.user.email,
