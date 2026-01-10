@@ -89,8 +89,38 @@ const getPostById = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+const getMyPosts = async (req: Request, res: Response) => {
+  try {
+    
+    
+    const userId = req?.user?.id;
+  
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id Not Found",
+      });
+    }
+
+    const result = await postService.getMyPosts(userId);
+    res.status(201).json({
+      success: true,
+      result,
+    });
+  } catch (error) {
+    const errorMessage=(error instanceof Error)?error.message:"Post retrieval failed"
+    res.status(400).json({
+      success: false,
+      error:errorMessage,
+      details:error
+      
+    });
+  }
+};
 export const postController = {
   createPost,
   getAllPosts,
-  getPostById,
+  getPostById,getMyPosts
 };

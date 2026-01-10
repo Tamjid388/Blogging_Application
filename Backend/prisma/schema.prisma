@@ -32,10 +32,10 @@ model Comment {
   content  String @db.Text
   authorId String
   postId   String
-  post     Post   @relation(fields: [postId], references: [id])
+  post     Post   @relation(fields: [postId], references: [id],onDelete: Cascade)
 
   parentId String?
-  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id],onDelete: Cascade)
   replies  Comment[] @relation("CommentReplies")
 
   status    CommentStatus @default(APPROVED)
@@ -68,8 +68,10 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-
+  
   role String? @default("USER")
+  status String? @default("ACTIVE")
+  phone String? 
 
   @@unique([email])
   @@map("user")

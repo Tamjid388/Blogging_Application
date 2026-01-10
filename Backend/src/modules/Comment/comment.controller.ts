@@ -21,14 +21,14 @@ const createComment = async (req: Request, res: Response) => {
 };
 const getCommentById = async (req: Request, res: Response) => {
   try {
-   const {commentId}=req.params
-   if(!commentId){
-    return res.status(401).json({
-      success:false
-      ,message:"Comment Id Not Found"
-    })
-   }
-    const result = await commentServices.getCommentById(commentId)
+    const { commentId } = req.params;
+    if (!commentId) {
+      return res.status(401).json({
+        success: false,
+        message: "Comment Id Not Found",
+      });
+    }
+    const result = await commentServices.getCommentById(commentId);
     res.status(201).json({
       result,
     });
@@ -42,14 +42,14 @@ const getCommentById = async (req: Request, res: Response) => {
 //comments by author id
 const getCommentsByAuthor = async (req: Request, res: Response) => {
   try {
-   const {authorId}=req.params
-   if(!authorId){
-    return res.status(401).json({
-      success:false
-      ,message:"Author Id Not Found"
-    })
-   }
-    const result = await commentServices.getCommentsByAuthor(authorId)
+    const { authorId } = req.params;
+    if (!authorId) {
+      return res.status(401).json({
+        success: false,
+        message: "Author Id Not Found",
+      });
+    }
+    const result = await commentServices.getCommentsByAuthor(authorId);
     res.status(201).json({
       result,
     });
@@ -61,37 +61,113 @@ const getCommentsByAuthor = async (req: Request, res: Response) => {
   }
 };
 
-const deleteComment= async (req: Request, res: Response) => {
+const deleteComment = async (req: Request, res: Response) => {
   try {
-   const {commentId}=req.params
-   const userId=req?.user?.id
-   if(!commentId){
-    return res.status(400).json({
-      success:false
-      ,message:"comment Id Not Found"
-    })
-   }
-   if(!userId){
-    return res.status(400).json({
-      success:false
-      ,message:"comment Id Not Found"
-    })
-   }
-  
-    const result = await commentServices.deleteComment({commentId,userId})
+    const { commentId } = req.params;
+    const userId = req?.user?.id;
+    if (!commentId) {
+      return res.status(400).json({
+        success: false,
+        message: "comment Id Not Found",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id Not Found",
+      });
+    }
+
+    const result = await commentServices.deleteComment({ commentId, userId });
     res.status(201).json({
-      success:true,
+      success: true,
       result,
     });
   } catch (error: any) {
     res.status(400).json({
-      success:false,
+      success: false,
       message: "Comment delete failed",
       details: error?.message || error,
     });
   }
 };
+const updateComment = async (req: Request, res: Response) => {
+  try {
+    const { commentId } = req.params;
+    const userId = req?.user?.id;
+    if (!commentId) {
+      return res.status(400).json({
+        success: false,
+        message: "comment Id Not Found",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id Not Found",
+      });
+    }
+
+    const result = await commentServices.updateComment(
+      commentId,
+      req.body,
+      userId
+    );
+    res.status(201).json({
+      success: true,
+      result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: "Comment update failed",
+      details: error?.message || error,
+    });
+  }
+};
+
+//--> moderate comments
+const moderateComments = async (req: Request, res: Response) => {
+  try {
+    const body=req.body
+    const { commentId } = req.params;
+    const userId = req?.user?.id;
+    if (!commentId) {
+      return res.status(400).json({
+        success: false,
+        message: "comment Id Not Found",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id Not Found",
+      });
+    }
+
+    const result = await commentServices.moderateComments(
+  commentId,body);
+    res.status(201).json({
+      success: true,
+      result,
+    });
+  } catch (error) {
+    const errorMessage=(error instanceof Error)?error.message:"Comment Update failed"
+    res.status(400).json({
+      success: false,
+      error:errorMessage,
+      details:error
+      
+    });
+  }
+};
+
 
 export const commentController = {
-  createComment,getCommentById,getCommentsByAuthor,deleteComment
+  createComment,
+  getCommentById,
+  getCommentsByAuthor,
+  deleteComment,
+  updateComment,
+  moderateComments,
 };
