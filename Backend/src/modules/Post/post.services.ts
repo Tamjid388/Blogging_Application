@@ -1,4 +1,4 @@
-import { date } from "better-auth/*";
+import { date, templateLiteral } from "better-auth/*";
 import {
   CommentStatus,
   Post,
@@ -101,13 +101,13 @@ const getAllPosts = async ({
     orderBy: {
       [sortBy]: sortOrder,
     },
-    include:{
-      _count:{
-        select:{
-          comments:true
-        }
-      }
-    }
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
   });
   const total = await prisma.post.count({
     where: {
@@ -177,43 +177,99 @@ const getPostById = async (postId: string) => {
 
   return result;
 };
-const getMyPosts=async(authorId:string)=>{
-  const userInfo=await prisma.user.findUniqueOrThrow({
-    where:{
-      id:authorId,
-      status:"ACTIVE"
+const getMyPosts = async (authorId: string) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: authorId,
+      status: "ACTIVE",
     },
-    select:{
-      id:true,
-      status:true
-    }
-  })
-const result=await prisma.post.findMany({
-    where:{
-        authorId
+    select: {
+      id: true,
+      status: true,
     },
-    orderBy:{
-        createdAt:"desc"
+  });
+  const result = await prisma.post.findMany({
+    where: {
+      authorId,
     },
-    include:{
-      _count:{
-        select:{
-          comments:true
-        }
-      
-      }
-    }
-})
-const postcount=await prisma.post.count({
-  where:{
-    authorId
-  }
-})
-return {postcount,data:result}
-}
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
+  const postcount = await prisma.post.count({
+    where: {
+      authorId,
+    },
+  });
+  return { postcount, data: result };
+};
 
+//-->Only User can update his post excluding isFeatured,Admin can update all
+const updatePosts = async (
+  postId: string,
+  data: Partial<Post>,
+  authorId: string,
+  isAdmin: boolean
+) => {
+  const postData = await prisma.post.findUniqueOrThrow({
+    where: {
+      id: postId,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+  if (postData.authorId !== authorId && !isAdmin) {
+    throw new Error("You dont have authorization to modify this post");
+  }
+  if (!isAdmin) {
+    delete data.isFeatured;
+  }
+  const result = await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data,
+  });
+  return result;
+};
+
+const deletePostById = async (
+  postId: string,
+  authorId: string,
+  isAdmin: boolean
+) => {
+  const postData = await prisma.post.findFirstOrThrow({
+    where: {
+      id: postId,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+  if (postData.authorId !== authorId && !isAdmin) {
+    throw new Error("You dont have authorization to modify this post");
+  }
+  return await prisma.post.delete({
+    where: {
+      id: postId,
+    },
+  });
+};
 export const postService = {
   createPost,
   getAllPosts,
-  getPostById,getMyPosts
+  getPostById,
+  getMyPosts,
+  updatePosts,
+  deletePostById,
 };

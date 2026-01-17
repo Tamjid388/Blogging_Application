@@ -90,13 +90,10 @@ const getPostById = async (req: Request, res: Response) => {
   }
 };
 
-
 const getMyPosts = async (req: Request, res: Response) => {
   try {
-    
-    
     const userId = req?.user?.id;
-  
+
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -110,17 +107,87 @@ const getMyPosts = async (req: Request, res: Response) => {
       result,
     });
   } catch (error) {
-    const errorMessage=(error instanceof Error)?error.message:"Post retrieval failed"
+    const errorMessage =
+      error instanceof Error ? error.message : "Post retrieval failed";
     res.status(400).json({
       success: false,
-      error:errorMessage,
-      details:error
-      
+      error: errorMessage,
+      details: error,
     });
   }
 };
+const updatePosts = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { postId } = req.params;
+    const userId = req?.user?.id;
+    const isAdmin = user?.role === "ADMIN";
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id Not Found",
+      });
+    }
+
+    const result = await postService.updatePosts(
+      postId as string,
+      req.body,
+      userId,
+      isAdmin
+    );
+    res.status(201).json({
+      success: true,
+      result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Post Update failed";
+    res.status(400).json({
+      success: false,
+      error: errorMessage,
+      details: error,
+    });
+  }
+};
+const deletePostById = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const { postId } = req.params;
+    const userId = req?.user?.id;
+    const isAdmin = user?.role === "ADMIN";
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User Id Not Found",
+      });
+    }
+
+    const result = await postService.deletePostById(
+      postId as string,
+      userId,
+      isAdmin
+    );
+    res.status(201).json({
+      success: true,
+      message: "Post Deleted Successfully",
+      result,
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Post deletation failed";
+    res.status(400).json({
+      success: false,
+      error: errorMessage,
+      details: error,
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPosts,
-  getPostById,getMyPosts
+  getPostById,
+  getMyPosts,
+  updatePosts,
+  deletePostById,
 };

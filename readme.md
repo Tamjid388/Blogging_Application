@@ -6,22 +6,22 @@ A modern, full-stack blogging application built with Next.js, Prisma, Express, a
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 16, React, TypeScript, Tailwind CSS
 - **Backend**: Express.js, Node.js
 - **Database**: PostgreSQL
 - **ORM**: Prisma
-- **Authentication**: JWT/Session-based
-- **Deployment**: Vercel (Frontend), Docker (Backend)
+- **Authentication**: Better-Auth/Session-based
+- **Deployment**: Vercel
 
 ## Features
 
--  Create, read, update, and delete blog posts
--  User authentication and authorization
--  Comments on blog posts
--  Blog post categories and tags
--  Search and filter functionality
--  Responsive and mobile-friendly design
--  Clean and modern UI
+- Create, read, update, and delete blog posts
+- User authentication and authorization
+- Comments on blog posts
+- Blog post categories and tags
+- Advanced Search and filter functionality
+- Responsive and mobile-friendly design
+- Clean and modern UI
 
 ## Use Case Diagram
 
@@ -30,10 +30,6 @@ A modern, full-stack blogging application built with Next.js, Prisma, Express, a
 ## Entity Relationship Diagram (ERD)
 
 ![ERD](https://i.ibb.co.com/f7wB3XT/blog-Application.webp)
-
-
-
-
 
 <!-- ## API Endpoints
 
@@ -55,5 +51,3 @@ A modern, full-stack blogging application built with Next.js, Prisma, Express, a
 
 - `GET /api/posts/:postId/comments` - Get comments for a post
 - `POST /api/posts/:postId/comments` - Add a comment -->
-
-
