@@ -36,5 +36,7 @@ const session = await userService.getSession();
 }
 
 export const config = {
-  matcher: ["/dashboard","/admin-dashboard"]
+  matcher: ["/dashboard","/admin-dashboard","/dashboard/:path*",
+    "/admin-dashboard/:path*"
+  ]
 };

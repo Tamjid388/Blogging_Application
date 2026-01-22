@@ -1,26 +1,25 @@
+import BlogCard from "@/components/modules/homePage/BlogCard";
+import { blogService } from "@/services/blog.service";
 import { userService } from "@/services/user.service";
+import { BlogPost } from "@/types";
 import { cookies } from "next/headers";
 
 export default async function Home() {
 const {data}=await userService.getSession()
-console.log(data?.user);
-
+// console.log(data?.user);
+const {data:blogs}=await blogService.getBlogPosts({
+  isFeatured:true,
+ 
+},{
+ cache:"no-store"
+})
+console.log(blogs.result.data);
+const allBlogs=blogs.result.data
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center  py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <h1
-          className="
-text-4xl font-bold m-4"
-        >
-          Home Page
-        </h1>
-        <h1
-          className="
-text-4xl font-bold m-4 text-indigo-600"
-        >
-          {data?.user?.name}
-        </h1>
-      </main>
+    <div className="grid grid-cols-3 max-w-7xl mx-auto px-4 gap-6">
+      {allBlogs.map((post: BlogPost) => (
+        <BlogCard key={post.id} post={post} />
+      ))}
     </div>
   );
 }
