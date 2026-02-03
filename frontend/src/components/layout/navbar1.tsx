@@ -1,6 +1,6 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { Book, Menu, Sunset, Trees, User, Zap } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { DarkModeToggle } from "./DarkModeToggle";
+import { authClient } from "@/lib/auth-client";
 
 interface MenuItem {
   title: string;
@@ -92,6 +93,9 @@ const Navbar1 = ({
   },
   className,
 }: Navbar1Props) => {
+  const { data: session } = authClient.useSession()
+  const user=session?.user
+  console.log(session);
   return (
     <section className={cn("py-4", className)}>
       <div className="container mx-auto px-1">
@@ -117,14 +121,26 @@ const Navbar1 = ({
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <DarkModeToggle/>
-            <Button asChild variant="outline" size="sm">
+            {
+              user ? <>
+              <Button variant={"outline"}>
+                <User/>
+                {user.name}</Button>
+              
+              </>
+              :
+              <>
+                <Button asChild variant="outline" size="sm">
               <a href={auth.login.url}>{auth.login.title}</a>
             </Button>
             <Button asChild size="sm">
               <a href={auth.signup.url}>{auth.signup.title}</a>
             </Button>
+              </>
+            }
+          
           </div>
         </nav>
 

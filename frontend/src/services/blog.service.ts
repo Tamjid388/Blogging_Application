@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { ur } from "zod/v4/locales";
+
 
 const API_URL = env.API_URL;
 
@@ -7,12 +7,12 @@ interface BlogParams {
   isFeatured?: boolean;
   search?: string;
 }
-interface TOptions{
-  cache?:RequestCache
-  revalidate?:number
+interface TOptions {
+  cache?: RequestCache;
+  revalidate?: number;
 }
 export const blogService = {
-  getBlogPosts: async (params?: BlogParams,Options?:TOptions) => {
+  getBlogPosts: async (params?: BlogParams, Options?: TOptions) => {
     try {
       const url = new URL(`${API_URL}/posts`);
       // url.searchParams.append("key", "value");
@@ -24,20 +24,30 @@ export const blogService = {
           }
         });
       }
-      const config:RequestInit={}
-      if(Options?.cache){
-        config.cache=Options.cache
+      const config: RequestInit = {};
+      if (Options?.cache) {
+        config.cache = Options.cache;
       }
-if(Options?.revalidate){
-  config.next={revalidate:Options?.revalidate}
-}
+      if (Options?.revalidate) {
+        config.next = { revalidate: Options?.revalidate };
+      }
 
-      const res = await fetch(url.toString(),config);
+      const res = await fetch(url.toString(), config);
 
       const result = await res.json();
-      return { data: result, error: null };
+      return { data: result };
     } catch (error) {
       return { data: null, error: { messsage: "Something Went Wrong" } };
+    }
+  },
+
+  getBlogById: async (id: string) => {
+    try {
+      const res = await fetch(`${API_URL}/posts/${id}`);
+      const result = await res.json();
+      return { data: result };
+    } catch (error) {
+      return { data: null, error: error, message: "Something Went Wrong" };
     }
   },
 };
